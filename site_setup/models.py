@@ -1,4 +1,5 @@
 from django.db import models
+from utils import validator
 
 # Create your models here.
 
@@ -32,7 +33,7 @@ class SiteSetup(models.Model):
     show_description = models.BooleanField(default = True)
     show_footer = models.BooleanField(default = True)
 
-    favicon = models.ImageField(upload_to='assets/favicon/%Y/%m/', blank=True, default='')
+    favicon = models.ImageField(upload_to='assets/favicon/%Y/%m/', blank=True, default='', validators=[validator.validate_png])
 
     def __str__(self) -> str:
         return self.title
