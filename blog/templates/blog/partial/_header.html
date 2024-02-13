@@ -1,1 +1,53 @@
-<p>Eu sou da header</p>
+<header class="width-wide section-gap">
+    <div class="section-content">
+        <div class="heading center">
+            <h1><a href="{% url "blog:index" %}">{{setup.title}}</a></h1>
+        </div>
+
+        <div class="description center">
+            <p class="description-content">{{setup.description}}</p>
+        </div>
+
+        <div class="search center">
+            <form class="search-form" action="#" method="get" >
+                <div class="search-content">
+                    <input
+                    class="search-input" 
+                    type="search"
+                    id="search-input"
+                    name = "search"
+                    placeholder="Search">
+
+                    <button type="submit" class="search-btn">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <nav class="menu">
+            <ul class="menu-list">
+                <li class="menu-item">
+                    <a href="#">Post</a>
+                </li>
+
+                <li class="menu-item">
+                    <a href="#">Page</a>
+                </li>
+
+                <li class="menu-item">
+                    <a href="#">About us</a>
+                </li>
+
+                <li class="menu-item">
+                    <a href="#">Contact</a>
+                </li>
+
+                <li class="menu-item">
+                    <a href="#">Support</a>
+                </li>
+            </ul>
+        </nav>
+        
+    </div>
+</header>
