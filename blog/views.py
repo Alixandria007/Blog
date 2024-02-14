@@ -4,10 +4,10 @@ from django.core.paginator import Paginator
 # Create your views here.
 
 def index(request):
-    posts = 1000
+    posts = [x for x in range(1000)]
 
     paginator = Paginator(posts,10)
-    page_number = paginator.GET.get("page")
+    page_number = request.GET.get("page",None)
     page_obj = paginator.get_page(page_number)
 
     context = {

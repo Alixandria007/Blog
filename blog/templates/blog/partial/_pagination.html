@@ -1,15 +1,19 @@
-    <div>
-    
-    {% if pagina_objetos.has_previous %}
-        <a href="?pagina=1"><i class="fa-solid fa-arrow-right"></i></a>
-        <a href="?pagina={{ pagina_objetos.previous_page_number }}"></a>
-    {% endif %}
-
-    <span>{{ pagina_objetos.number }} / {{ pagina_objetos.paginator.num_pages }}</span>
-
-    {% if pagina_objetos.has_next %}
-        <a href="?pagina={{ pagina_objetos.next_page_number }}">Próxima</a>
-        <a href="?pagina={{ pagina_objetos.paginator.num_pages }}">Última</a>
-    {% endif %}
-    
-    </div>
+        {% if page_obj %}
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a class="forward-left" href="?page=1"><i class="forward-left fa-solid fa-forward-fast"></i></a>
+                    <a href="?page={{ page_obj.previous_page_number }}"><i class="fa-solid fa-circle-left"></i></a>
+                {% endif %}
+        
+                <span class="current">
+                    {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                </span>
+        
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}"><i class="fa-solid fa-circle-right"></i></a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}"><i class="fa-solid fa-forward-fast"></i></a>
+                {% endif %}
+            </span>
+        </div>
+        {% endif %}
