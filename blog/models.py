@@ -35,3 +35,19 @@ class Category(models.Model):
 
     def __str__(self) -> str:
         return self.name
+    
+
+class Page(models.Model):
+
+    class Meta:
+        verbose_name = "Page"
+        verbose_name_plural = "Pages"
+
+    title = models.CharField(max_length = 55)
+    slug = models.SlugField(
+        unique = True, blank = False, max_length = 255
+    )
+
+    is_public = models.BooleanField(default = False)
+
+    content = models.TextField()
