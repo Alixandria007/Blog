@@ -17,3 +17,21 @@ class Tag(models.Model):
 
     def __str__(self) -> str:
         return self.name
+    
+
+
+class Category(models.Model):
+
+    class Meta:
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
+
+    name = models.CharField(
+        max_length = 255
+    )
+    slug = models.SlugField(
+        unique = True, blank = False, max_length = 255
+    )
+
+    def __str__(self) -> str:
+        return self.name
