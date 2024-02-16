@@ -1,3 +1,4 @@
+from typing import Any
 from django.contrib import admin
 from blog import models
 
@@ -35,13 +36,23 @@ class PageAdmin(admin.ModelAdmin):
 
 @admin.register(models.Post)
 class PageAdmin(admin.ModelAdmin):
-    list_display = 'id','title','slug','is_public','cover_public','create_at'
+    list_display = 'id','title','slug','is_public',
     ordering = '-id',
-    list_editable = 'title','is_public','cover_public'
-    list_per_page = 10
-    list_max_show_all = 200
+    list_editable = 'is_public',
+    list_per_page = 50
+    readonly_fields = 'create_at','update_at','created_by', 'update_by'
     list_display_links = 'id',
     prepopulated_fields = {
         "slug": ('title',),
     }
+
+    def save_model(self, request, obj, form, change):
+
+        if change:
+            models.Post.update_by = request.user
+        else:
+            models.Post.created_by = request.user
+
+            
+        return super().save_model(request, obj, form, change)
 
