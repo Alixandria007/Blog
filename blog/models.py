@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -51,3 +52,40 @@ class Page(models.Model):
     is_public = models.BooleanField(default = False)
 
     content = models.TextField()
+
+
+class Post(models.Model):
+
+    class Meta:
+        verbose_name = "Post"
+        verbose_name_plural = "Posts"
+
+    title = models.CharField(max_length = 55)
+    slug = models.SlugField(
+        unique = True, blank = False, max_length = 255
+    )
+
+    is_public = models.BooleanField(default = False)
+
+    content = models.TextField()
+    excerpt = models.CharField(max_length = 255)
+
+    cover = models.ImageField(upload_to='img/%Y/%m', blank=True, null=True, default=None)
+    cover_public = models.BooleanField(default = False)
+
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        related_name='post_created_by'
+    )
+    create_at = models.DateTimeField(auto_now_add = True)
+    update_at = models.DateTimeField(auto_now = True)
+    update_by = models.ForeignKey(User , on_delete = models.SET_NULL, default = None, blank = True, null = True, related_name = "post_update_by" )
+
+    category = models.ForeignKey("Category", on_delete=models.SET_NULL, default = None, null = True, blank = True)
+    tag = models.ManyToManyField(Tag, blank = True)
+
+    def __str__(self):
+        return self.title
+    
