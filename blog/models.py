@@ -1,3 +1,5 @@
+from typing import Iterable
+from utils import images
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -88,5 +90,17 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
-
     
+    def save(self,*args, **kwargs):
+
+        cover_name = str(self.cover.name)
+        super_save = super().save(*args, **kwargs)
+        cover_changed = False
+
+        if self.cover:
+            cover_changed = cover_name != self.cover.name
+
+        if cover_changed:
+            self.cover = images.resize_images(self.cover, 900, True, 80)
+
+        return super_save

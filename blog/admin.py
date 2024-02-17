@@ -1,4 +1,5 @@
 from typing import Any
+from django_summernote.admin import SummernoteModelAdmin
 from django.contrib import admin
 from blog import models
 
@@ -35,7 +36,8 @@ class PageAdmin(admin.ModelAdmin):
     }
 
 @admin.register(models.Post)
-class PageAdmin(admin.ModelAdmin):
+class PageAdmin(SummernoteModelAdmin):
+    summernote_fields = 'content',
     list_display = 'id','title','slug','is_public',
     ordering = '-id',
     list_editable = 'is_public',

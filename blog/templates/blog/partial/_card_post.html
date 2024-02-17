@@ -1,0 +1,11 @@
+{% for post in page_obj  %}
+    {% if post.cover %}
+        {% if post.cover_ispublic %}
+            <div class="card-cover-wrapper">
+                <a class="cover-link" href="{% url "blog:post" post.slug %}">
+                    <img class="cover-card" src="{{post.cover}}" alt="post.title" loading="lazy">
+                </a>
+            </div>
+        {% endif %}
+    {% endif %}
+{% endfor %}
