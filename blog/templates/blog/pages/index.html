@@ -1,11 +1,10 @@
 {% extends "blog/base.html" %}
 
-{% block content %}
-    Titulo: {{setup.title}}
-    <h1>INDEX</h1>
-    <a href="">TESTEEEEEEEEEEE</a>
 
-    <pre>
-        RECEBAAAAAAAAAAAAAAAAAA
-    </pre>
-{% endblock content %}
+    {% block content %}
+    <div class="card-grid">
+        {% for post in page_obj %}
+            {% include "blog/partial/_card_post.html" with i=forloop.counter0 %}
+        {% endfor %}
+    </div>
+    {% endblock content %}

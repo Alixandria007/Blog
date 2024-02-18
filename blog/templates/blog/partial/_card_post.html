@@ -1,11 +1,34 @@
-{% for post in page_obj  %}
+<article class="card">
+
     {% if post.cover %}
-        {% if post.cover_ispublic %}
+        {% if post.cover_public %}
             <div class="card-cover-wrapper">
-                <a class="cover-link" href="{% url "blog:post" post.slug %}">
-                    <img class="cover-card" src="{{post.cover}}" alt="post.title" loading="lazy">
+                <a class="cover-link" href="{% url "blog:post" %}">
+                    <img class="cover-card" src="{{post.cover.url}}" alt="post.title" loading="lazy">
                 </a>
             </div>
         {% endif %}
     {% endif %}
-{% endfor %}
+
+    <div class="card-text-wrapper">
+        <div class="card-title-wrapper">
+            <a class="card-title-link" href="{% url "blog:post" %}">
+                <h2 class="card-title">{{post.title}}</h2>
+            </a>
+        </div>
+
+        <div class="card-content-wrapper">
+            <div class="card-content">
+                <p>{{post.excerpt}}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-actions">
+        <a class="card-action-link" href="{% url 'blog:post' %}">
+            <span>Read</span>
+            <i class="fa-solid fa-circle-arrow-right"></i>
+        </a>
+    </div>
+
+</article>
