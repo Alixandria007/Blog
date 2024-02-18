@@ -1,11 +1,22 @@
 {% extends "blog/base.html" %}
 
 {% block content %}
-    Titulo: {{setup.title}}
-    <h1>POST</h1>
-    <a href="">TESTEEEEEEEEEEE</a>
+    <div class="post width-narrow">
+        {% if post.cover %}
+            <img src="{{post.cover.url}}" alt="">
+        {% endif %}
+        <h1 class="center">{{post.title}}</h1>
+        <div class="post-info-wrapper">
+            <ul class="post-info">
+                <li class="info"><span><i class="fa-solid fa-calendar-days"></i> {{post.create_at}}</span></li>
+                <li class="info"><span> <i class="fa-solid fa-user"></i><a href="{% url "blog:created_by" post.created_by.id %}"> {{post.created_by}}</a></span></li>
+                <li class="info"><span><i class="fa-solid fa-list"></i> <a href="{% url "blog:category" post.category.slug %}">{{post.category}}</a></span></li>
+            </ul>
+        </div>
 
-    <pre>
-        RECEBAAAAAAAAAAAAAAAAAA
-    </pre>
+        <p>{{post.excerpt}}</p>
+        {{post.content}}
+    </div>
+
+    
 {% endblock content %}

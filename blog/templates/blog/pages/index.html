@@ -2,9 +2,17 @@
 
 
     {% block content %}
-    <div class="card-grid">
-        {% for post in page_obj %}
-            {% include "blog/partial/_card_post.html" with i=forloop.counter0 %}
-        {% endfor %}
-    </div>
+    {% if page_obj %}
+        <div class="card-grid">
+            {% for post in page_obj %}
+                {% include "blog/partial/_card_post.html" with i=forloop.counter0 %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="width-wide">
+            <h2 class="center">Nada encontrado 😞</h2>
+
+            <p>Não encontramos nada, certifique se é exatamente esta pagina que você procura, ou volte para <a href="{% url "blog:index" %}">Home</a></p>
+        </div>
+    {% endif %}
     {% endblock content %}

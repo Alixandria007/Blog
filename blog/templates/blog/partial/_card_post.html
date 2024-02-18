@@ -2,17 +2,19 @@
 
     {% if post.cover %}
         {% if post.cover_public %}
-            <div class="card-cover-wrapper">
-                <a class="cover-link" href="{% url "blog:post" %}">
-                    <img class="cover-card" src="{{post.cover.url}}" alt="post.title" loading="lazy">
+            <div class="card-cover-wrapper ">
+                <a class="cover-link" href="{% url "blog:post" post.slug %}">
+                    <img class="card-cover" src="{{post.cover.url}}" alt="post.title" loading="lazy">
                 </a>
             </div>
+        {% else %}
+            <div class="cover-spacing"></div>
         {% endif %}
     {% endif %}
 
     <div class="card-text-wrapper">
         <div class="card-title-wrapper">
-            <a class="card-title-link" href="{% url "blog:post" %}">
+            <a class="card-title-link" href="{% url "blog:post" post.slug %}">
                 <h2 class="card-title">{{post.title}}</h2>
             </a>
         </div>
@@ -25,7 +27,7 @@
     </div>
 
     <div class="card-actions">
-        <a class="card-action-link" href="{% url 'blog:post' %}">
+        <a class="card-action-link" href="{% url 'blog:post' post.slug %}">
             <span>Read</span>
             <i class="fa-solid fa-circle-arrow-right"></i>
         </a>

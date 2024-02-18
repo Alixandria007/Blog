@@ -2,6 +2,7 @@ from typing import Iterable
 from utils import images
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 # Create your models here.
 
@@ -79,7 +80,7 @@ class Post(models.Model):
         User,
         on_delete=models.SET_NULL,
         blank=True, null=True,
-        related_name='post_created_by'
+        related_name='post_created_by',
     )
     create_at = models.DateTimeField(auto_now_add = True)
     update_at = models.DateTimeField(auto_now = True)
@@ -97,6 +98,8 @@ class Post(models.Model):
         super_save = super().save(*args, **kwargs)
         cover_changed = False
 
+
+        
         if self.cover:
             cover_changed = cover_name != self.cover.name
 
@@ -104,3 +107,9 @@ class Post(models.Model):
             self.cover = images.resize_images(self.cover, 900, True, 80)
 
         return super_save
+    
+    def get_absolute_url(self):
+        if not self.is_public:
+            return reverse('blog:index')
+        return reverse('blog:post', args=(self.slug,))
+    

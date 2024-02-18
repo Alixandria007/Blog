@@ -51,10 +51,10 @@ class PageAdmin(SummernoteModelAdmin):
     def save_model(self, request, obj, form, change):
 
         if change:
-            models.Post.update_by = request.user
+            obj.update_by = request.user
         else:
-            models.Post.created_by = request.user
+            obj.created_by = request.user
 
             
-        return super().save_model(request, obj, form, change)
+        return obj.save()
 
