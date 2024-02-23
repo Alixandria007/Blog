@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from blog import models
+from django.db.models import Q
 
 # Create your views here.
 
@@ -51,6 +52,38 @@ def created_by(request, id):
 
 def category(request, slug):
     posts = models.Post.objects.filter(category__slug = slug)
+
+    paginator = Paginator(posts,10)
+    page_number = request.GET.get("page",None)
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'page_obj': page_obj,
+    }
+
+
+    return render(request, 'blog/pages/index.html', context)
+
+
+def tag(request, slug):
+    search = request.GET
+
+    posts = models.Post.objects.filter(tag__slug = slug)
+
+    paginator = Paginator(posts,10)
+    page_number = request.GET.get("page",None)
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'page_obj': page_obj,
+    }
+
+
+    return render(request, 'blog/pages/index.html', context)
+
+
+def search(request):
+    posts = models.Post.objects.filter(Q(title__icontains = search))
 
     paginator = Paginator(posts,10)
     page_number = request.GET.get("page",None)
