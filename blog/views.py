@@ -3,23 +3,25 @@ from django.core.paginator import Paginator
 from blog import models
 from django.db.models import Q
 from django.http import Http404
+from django.views.generic import ListView
+
 
 # Create your views here.
 
-def index(request):
-    posts = (models.Post.objects.filter(is_public = True).order_by('-pk'))
 
-    paginator = Paginator(posts,10)
-    page_number = request.GET.get("page",None)
-    page_obj = paginator.get_page(page_number)
+class IndexListView(ListView):
+    model = models.Post
+    template_name = 'blog/pages/index.html'
+    context_object_name = 'page_obj'
+    ordering = '-pk',
+    paginate_by = 9
+    queryset = models.Post.objects.filter(is_public = True)
 
-    context = {
-        'page_obj': page_obj,
-        'page_title':f'Home - ',}
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = f'Home - '
+        return context
     
-
-
-    return render(request, 'blog/pages/index.html', context)
 
 def post(request, slug):
     posts = models.Post.objects.filter(is_public = True, slug = slug).first()
