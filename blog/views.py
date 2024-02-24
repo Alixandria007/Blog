@@ -27,8 +27,12 @@ def post(request, slug):
 
     return render(request, 'blog/pages/post.html', context)
 
-def page(request):
-    return render(request, 'blog/pages/page.html')
+def page(request,slug):
+    page = models.Page.objects.filter(slug = slug).first()
+
+
+    context = {'page': page}
+    return render(request, 'blog/pages/page.html',context)
 
 
 def created_by(request, id):

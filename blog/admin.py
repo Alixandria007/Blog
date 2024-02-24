@@ -24,7 +24,8 @@ class CategoryAdmin(admin.ModelAdmin):
     }
 
 @admin.register(models.Page)
-class PageAdmin(admin.ModelAdmin):
+class PageAdmin(SummernoteModelAdmin):
+    summernote_fields = 'content',
     list_display = 'id','title','slug','is_public',
     ordering = '-id',
     list_editable = 'title','is_public',
@@ -35,8 +36,13 @@ class PageAdmin(admin.ModelAdmin):
         "slug": ('title',),
     }
 
+    def get_absolute_url(self):
+        if not self.is_published:
+            return reverse('blog:index')
+        return reverse('blog:page', args=(self.slug,))
+
 @admin.register(models.Post)
-class PageAdmin(SummernoteModelAdmin):
+class PostAdmin(SummernoteModelAdmin):
     summernote_fields = 'content',
     list_display = 'id','title','slug','is_public',
     ordering = '-id',

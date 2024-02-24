@@ -1,11 +1,12 @@
 {% extends "blog/base.html" %}
 
 {% block content %}
-    Titulo: {{setup.title}}
-    <h1>PAGE</h1>
-    <a href="">TESTEEEEEEEEEEE</a>
 
-    <pre>
-        RECEBAAAAAAAAAAAAAAAAAA
-    </pre>
+<div class="post width-narrow">
+    <h1 class="center">{{page.title}}</h1>
+    
+    
+    {{page.content | safe}}
+</div>
+    
 {% endblock content %}
