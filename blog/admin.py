@@ -36,10 +36,7 @@ class PageAdmin(SummernoteModelAdmin):
         "slug": ('title',),
     }
 
-    def get_absolute_url(self):
-        if not self.is_published:
-            return reverse('blog:index')
-        return reverse('blog:page', args=(self.slug,))
+    
 
 @admin.register(models.Post)
 class PostAdmin(SummernoteModelAdmin):

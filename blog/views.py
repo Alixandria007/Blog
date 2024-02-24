@@ -22,7 +22,7 @@ def index(request):
     return render(request, 'blog/pages/index.html', context)
 
 def post(request, slug):
-    posts = models.Post.objects.filter(slug = slug).first()
+    posts = models.Post.objects.filter(is_public = True, slug = slug).first()
 
     if page == None:
         raise Http404()
@@ -33,7 +33,7 @@ def post(request, slug):
     return render(request, 'blog/pages/post.html', context)
 
 def page(request,slug):
-    page = models.Page.objects.filter(slug = slug).first()
+    page = models.Page.objects.filter(is_public = True, slug = slug).first()
 
     if page == None:
         raise Http404()
@@ -45,7 +45,7 @@ def page(request,slug):
 
 
 def created_by(request, id):
-    posts = models.Post.objects.filter(created_by__pk = id)
+    posts = models.Post.objects.filter(is_public = True, created_by__pk = id)
 
 
     paginator = Paginator(posts,10)
@@ -62,7 +62,7 @@ def created_by(request, id):
 
 
 def category(request, slug):
-    posts = models.Post.objects.filter(category__slug = slug)
+    posts = models.Post.objects.filter(is_public = True, category__slug = slug)
 
     paginator = Paginator(posts,10)
     page_number = request.GET.get("page",None)
@@ -81,7 +81,7 @@ def category(request, slug):
 
 
 def tag(request, slug):
-    posts = models.Post.objects.filter(tag__slug = slug)
+    posts = models.Post.objects.filter(is_public = True, tag__slug = slug)
 
     paginator = Paginator(posts,10)
     page_number = request.GET.get("page",None)
