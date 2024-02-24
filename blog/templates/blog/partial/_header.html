@@ -9,12 +9,12 @@
         </div>
 
         <div class="search center">
-            <form class="search-form" action="#" method="get" >
+            <form class="search-form" action="{% url "blog:search" %}" method="get" >
                 <div class="search-content">
                     <input
                     class="search-input" 
-                    type="search"
-                    id="search-input"
+                    type="text"
+                    id="search"
                     name = "search"
                     placeholder="Search">
 

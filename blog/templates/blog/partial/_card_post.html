@@ -10,13 +10,6 @@
         {% else %}
             <DIV class="cover-spacing"></DIV>
         {% endif %}
-
-    {% else %}
-        <div class="card-cover-wrapper ">
-            <a class="cover-link" href="{% url "blog:post" post.slug %}">
-                <img class="card-cover" src="/utils/sem-imagem.jpg" alt="post.title" loading="lazy">
-            </a>
-        </div>
     {% endif %}
 
     <div class="card-text-wrapper">
