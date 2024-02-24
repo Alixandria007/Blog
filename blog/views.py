@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.core.paginator import Paginator
 from blog import models
 from django.db.models import Q
+from django.http import Http404
 
 # Create your views here.
 
@@ -14,33 +15,38 @@ def index(request):
 
     context = {
         'page_obj': page_obj,
-    }
+        'page_title':f'Home - ',}
+    
 
 
     return render(request, 'blog/pages/index.html', context)
 
 def post(request, slug):
-    post = models.Post.objects.filter(slug = slug).first()
+    posts = models.Post.objects.filter(slug = slug).first()
 
+    if page == None:
+        raise Http404()
 
-    context = {'post': post}
+    context = {'post': posts,
+               'page_title':f'{posts.title} - ',}
 
     return render(request, 'blog/pages/post.html', context)
 
 def page(request,slug):
     page = models.Page.objects.filter(slug = slug).first()
 
+    if page == None:
+        raise Http404()
 
-    context = {'page': page}
+    context = {'page': page,
+               'page_title':f'{page.title} - ',
+               }
     return render(request, 'blog/pages/page.html',context)
 
 
 def created_by(request, id):
-    p = models.Post.objects.all()
     posts = models.Post.objects.filter(created_by__pk = id)
-    print(id)
-    print(posts)
-    print(p)
+
 
     paginator = Paginator(posts,10)
     page_number = request.GET.get("page",None)
@@ -48,6 +54,7 @@ def created_by(request, id):
 
     context = {
         'page_obj': page_obj,
+        'page_title': f'{posts.first().created_by} - Autor - '
     }
 
 
@@ -61,8 +68,12 @@ def category(request, slug):
     page_number = request.GET.get("page",None)
     page_obj = paginator.get_page(page_number)
 
+    if len(page_obj) == 0:
+        raise Http404()
+
     context = {
         'page_obj': page_obj,
+        'page_title': f'{posts.first().category.name} - Categoria - '
     }
 
 
@@ -76,8 +87,12 @@ def tag(request, slug):
     page_number = request.GET.get("page",None)
     page_obj = paginator.get_page(page_number)
 
+    if len(page_obj) == 0:
+        raise Http404()
+
     context = {
         'page_obj': page_obj,
+        'page_title': f'{posts.first().created_by} - Autor - '
     }
 
 
@@ -89,6 +104,7 @@ def search(request):
 
     context = {
         'page_obj': posts,
+        'page_title': f'{search[:30]} - Search - '
     }
 
 
