@@ -23,18 +23,27 @@ class IndexListView(ListView):
         context["page_title"] = f'Home - '
         return context
     
+class PostDatailView(DetailView):
+    model = models.Post
+    template_name = 'blog/pages/post.html'
+    slug_field = 'slug'
+    context_object_name = 'post'
 
-def post(request, slug):
-    post = models.Post.objects.filter(is_public = True, slug = slug).first()
+    def get_queryset(self) -> QuerySet[Any]:
+        qs = super().get_queryset().filter(is_public = True)
 
-    if post == None:
-        raise Http404()
-
-    context = {'post': post,
-               'page_title':f'{post.title} - ',}
-
-    return render(request, 'blog/pages/post.html', context)
-
+        return qs
+    
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if self.context_object_name == None:
+            raise Http404()
+        
+        return super().get(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = f'{self.object.title} - Post - '
+        return context
 
 class PageDatailView(DetailView):
     model = models.Page
@@ -55,7 +64,7 @@ class PageDatailView(DetailView):
     
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["page_title"] = f'{self.context_object_name.title} - Page - '
+        context["page_title"] = f'{self.object.title} - Page - '
         return context
 
 class CreatedByListView(IndexListView):
