@@ -4,16 +4,15 @@ from blog import models
 from django.db.models import Q
 from django.http import Http404
 from django.views.generic import ListView
+from django.contrib.auth.models import User
 
 
 # Create your views here.
 
 
 class IndexListView(ListView):
-    model = models.Post
     template_name = 'blog/pages/index.html'
     context_object_name = 'page_obj'
-    ordering = '-pk',
     paginate_by = 9
     queryset = models.Post.objects.filter(is_public = True)
 
@@ -46,22 +45,43 @@ def page(request,slug):
     return render(request, 'blog/pages/page.html',context)
 
 
-def created_by(request, id):
-    posts = models.Post.objects.filter(is_public = True, created_by__pk = id)
+class CreatedByListView(IndexListView):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._temp_context = {}
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self._temp_context['user']
+        user_full_name = user.username
+        print('Argumentos', context)
 
-    paginator = Paginator(posts,10)
-    page_number = request.GET.get("page",None)
-    page_obj = paginator.get_page(page_number)
+        page_title = user_full_name + ' - ' + ' Autor - '
 
-    context = {
-        'page_obj': page_obj,
-        'page_title': f'{posts.first().created_by} - Autor - '
-    }
+        context.update({
+            'page_title': page_title,
+        })
 
+        return context
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.filter(created_by__pk=self._temp_context['user'].pk)
+        return qs
+    
+    def get(self, request, *args, **kwargs):
+        id = self.kwargs.get('id')
+        user = User.objects.filter(pk=id).first()
 
-    return render(request, 'blog/pages/index.html', context)
+        if user is None:
+            raise Http404()
 
+        self._temp_context.update({
+            'id': id,
+            'user': user,
+        })
+
+        return super().get(request, *args, **kwargs)
 
 def category(request, slug):
     posts = models.Post.objects.filter(is_public = True, category__slug = slug)
