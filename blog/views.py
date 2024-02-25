@@ -82,6 +82,46 @@ class CreatedByListView(IndexListView):
         })
 
         return super().get(request, *args, **kwargs)
+    
+class CategoryListView(IndexListView):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._temp_context = {}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category = self._temp_context['category']
+        category_name = self.object_list[0].category.name
+        print('Argumentos', context)
+
+        page_title = str(category_name) + ' - ' + ' Autor - '
+
+        context.update({
+            'page_title': page_title,
+        })
+
+        return context
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.filter(category__slug = self._temp_context['slug'])
+        return qs
+    
+    def get(self, request, *args, **kwargs):
+        slug = self.kwargs.get('slug')
+        category = models.Category.objects.filter(slug = slug)
+
+        if slug is None:
+            raise Http404()
+
+        self._temp_context.update({
+            'slug': slug,
+            'category': category,
+        })
+
+        return super().get(request, *args, **kwargs)
+
+
 
 def category(request, slug):
     posts = models.Post.objects.filter(is_public = True, category__slug = slug)
