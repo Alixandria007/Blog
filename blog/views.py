@@ -54,7 +54,6 @@ class CreatedByListView(IndexListView):
         context = super().get_context_data(**kwargs)
         user = self._temp_context['user']
         user_full_name = user.username
-        print('Argumentos', context)
 
         page_title = user_full_name + ' - ' + ' Autor - '
 
@@ -90,11 +89,9 @@ class CategoryListView(IndexListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        category = self._temp_context['category']
         category_name = self.object_list[0].category.name
-        print('Argumentos', context)
 
-        page_title = str(category_name) + ' - ' + ' Autor - '
+        page_title = str(category_name) + ' - ' + ' Categoria - '
 
         context.update({
             'page_title': page_title,
@@ -120,45 +117,43 @@ class CategoryListView(IndexListView):
         })
 
         return super().get(request, *args, **kwargs)
+    
 
+class TagListView(IndexListView):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._temp_context = {}
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tag_name = self.object_list[0].tag.first().name
 
-def category(request, slug):
-    posts = models.Post.objects.filter(is_public = True, category__slug = slug)
+        page_title = str(tag_name) + ' - ' + ' Tag - '
 
-    paginator = Paginator(posts,10)
-    page_number = request.GET.get("page",None)
-    page_obj = paginator.get_page(page_number)
+        context.update({
+            'page_title': page_title,
+        })
 
-    if len(page_obj) == 0:
-        raise Http404()
+        return context
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.filter(tag__slug = self._temp_context['slug'])
+        return qs
+    
+    def get(self, request, *args, **kwargs):
+        slug = self.kwargs.get('slug')
+        tag = models.Tag.objects.filter(slug = slug)
 
-    context = {
-        'page_obj': page_obj,
-        'page_title': f'{posts.first().category.name} - Categoria - '
-    }
+        if slug is None:
+            raise Http404()
 
+        self._temp_context.update({
+            'slug': slug,
+            'tag': tag,
+        })
 
-    return render(request, 'blog/pages/index.html', context)
-
-
-def tag(request, slug):
-    posts = models.Post.objects.filter(is_public = True, tag__slug = slug)
-
-    paginator = Paginator(posts,10)
-    page_number = request.GET.get("page",None)
-    page_obj = paginator.get_page(page_number)
-
-    if len(page_obj) == 0:
-        raise Http404()
-
-    context = {
-        'page_obj': page_obj,
-        'page_title': f'{posts.first().created_by} - Autor - '
-    }
-
-
-    return render(request, 'blog/pages/index.html', context)
+        return super().get(request, *args, **kwargs)
 
 def search(request):
     search = request.GET.get('search','').strip()
