@@ -1,10 +1,11 @@
 from typing import Any
+from django.db.models.query import QuerySet
 from django.shortcuts import render,redirect
 from django.core.paginator import Paginator
 from blog import models
 from django.db.models import Q
 from django.http import Http404, HttpRequest, HttpResponse
-from django.views.generic import ListView
+from django.views.generic import ListView,DetailView
 from django.contrib.auth.models import User
 
 
@@ -24,27 +25,38 @@ class IndexListView(ListView):
     
 
 def post(request, slug):
-    posts = models.Post.objects.filter(is_public = True, slug = slug).first()
+    post = models.Post.objects.filter(is_public = True, slug = slug).first()
 
-    if page == None:
+    if post == None:
         raise Http404()
 
-    context = {'post': posts,
-               'page_title':f'{posts.title} - ',}
+    context = {'post': post,
+               'page_title':f'{post.title} - ',}
 
     return render(request, 'blog/pages/post.html', context)
 
-def page(request,slug):
-    page = models.Page.objects.filter(is_public = True, slug = slug).first()
 
-    if page == None:
-        raise Http404()
+class PageDatailView(DetailView):
+    model = models.Page
+    template_name = 'blog/pages/page.html'
+    slug_field = 'slug'
+    context_object_name = 'page'
 
-    context = {'page': page,
-               'page_title':f'{page.title} - ',
-               }
-    return render(request, 'blog/pages/page.html',context)
+    def get_queryset(self) -> QuerySet[Any]:
+        qs = super().get_queryset().filter(is_public = True)
 
+        return qs
+    
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if self.context_object_name == None:
+            raise Http404()
+        
+        return super().get(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = f'{self.context_object_name.title} - Page - '
+        return context
 
 class CreatedByListView(IndexListView):
     def __init__(self, **kwargs):
