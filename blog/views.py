@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from typing import Any
+from django.shortcuts import render,redirect
 from django.core.paginator import Paginator
 from blog import models
 from django.db.models import Q
-from django.http import Http404
+from django.http import Http404, HttpRequest, HttpResponse
 from django.views.generic import ListView
 from django.contrib.auth.models import User
 
@@ -155,14 +156,35 @@ class TagListView(IndexListView):
 
         return super().get(request, *args, **kwargs)
 
-def search(request):
-    search = request.GET.get('search','').strip()
-    posts = models.Post.objects.filter(Q(title__icontains=search) | Q(excerpt__icontains=search) | Q(content__icontains=search))
-
-    context = {
-        'page_obj': posts,
-        'page_title': f'{search[:30]} - Search - '
-    }
 
 
-    return render(request, 'blog/pages/index.html', context)
+
+class SearchListView(IndexListView):
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._search_value = ''
+
+    def setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
+        self._search_value = request.GET.get('search', '')
+        return super().setup(request, *args, **kwargs)
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.filter(Q(title__icontains=self._search_value) | Q(excerpt__icontains=self._search_value) | Q(content__icontains=self._search_value))
+        return qs
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        page_title = self._search_value[:30] + ' - ' + ' Search - '
+
+        context.update({
+            'page_title': page_title,
+        })
+
+        return context
+    
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if self._search_value == '':
+            return redirect('blog:index')
+        return super().get(request, *args, **kwargs)
